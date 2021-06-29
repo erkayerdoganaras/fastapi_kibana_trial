@@ -1,0 +1,70 @@
+from elasticsearch import Elasticsearch,helpers
+from datetime import datetime
+from elasticsearch_dsl import Search
+import time
+import datetime
+import os,sys
+import json
+import pandas as pd
+import numpy as np
+import requests
+from typing import List
+from fastapi import FastAPI, Depends
+from pydantic import BaseModel, Field
+from datetime import datetime
+
+print(es.ping())
+
+
+app = FastAPI()
+es=Elasticsearch(['http://168.119.224.222:32072'])
+print(es.ping())
+
+@app.get("/logs")
+async def get_logs():
+    try:
+        liste= []
+        results = helpers.scan(es, index="logstash-2021.06.26", query={"query": {"match_all": {}}})
+        for item in results:
+             liste.append(item['_source']["log"])
+        return liste
+    except:
+        pass
+
+
+@app.get("/logs/{index}")
+async def log_index(index:str):
+    try:
+        liste = []
+        results = helpers.scan(es, index=index, query={"query": {"match_all": {}}})
+        for item in results:
+            liste.append(item['_source']["log"])
+        return liste
+    except:
+        pass
+
+@app.get("/logs/{index}/kubernetes_namespace")
+async def namespace(index:str):
+    try:
+        liste=[]
+        query_body = {
+            "query": {
+                "bool": {
+                    "must": {
+                        "match": {
+                            "kubernetes.namespace_name": "kube-system"
+
+                        }
+                    }
+                }
+            }
+        }
+        results = helpers.scan(es, index=index, query=query_body)
+        for item in results:
+            liste.append(item)
+        return liste
+    except:
+        pass
+
+
+
