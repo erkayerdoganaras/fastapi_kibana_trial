@@ -18,9 +18,6 @@ from datetime import datetime
 app = FastAPI()
 es=Elasticsearch(['http://168.119.224.222:32072'])
 
-
-
-
 @app.get("/logs")
 async def get_logs():
     try:
@@ -51,32 +48,78 @@ async def namespace(index:str,namespace:str):
         query_body = {
 
             "query": {
-                "match": {
-                    "kubernetes.namespace_name": {
-                        "query": namespace,
-                        "fuzziness": 0
-                    }
-                }
+    "bool": {
+      "must":
+        {
+          "match_phrase": {
+            "kubernetes.namespace_name": {
+              "query": namespace
             }
+          }
+        },
+      "filter": [
+        {
+          "match_all": {}
+        }
+      ],
+      "should": [],
+      "must_not": []
+    }
+  }
         }
         results = helpers.scan(es, index=index, query=query_body)
         return results
     except:
         pass
 
+"""@app.get("/logs/{index}/{pod_id}")
+async def pod_id(pod_id:str,index:str):
+    try:
+        liste=[]
+        query_body = {
+            "query": {
+                "bool": {
+                    "must": {
+                        "match": {
+                            "kubernetes.pod_id": pod_id
+
+                        }
+                    }
+                }
+            }
+        }
+        results = helpers.scan(es, index=index, query=query_body)
+        for item in results:
+            liste.append(item)
+        return liste
+
+    except:
+        pass"""
+
 @app.get("/logs/{index}/all/{pod_name}")
 async def namespace(index:str,pod_name:str):
     try:
 
         query_body = {
-            "query": {
-                "match": {
-                    "kubernetes.pod_name": {
-                        "query": pod_name,
-                        "fuzziness": 0
-                    }
-                }
+        "query": {
+    "bool": {
+      "must":
+        {
+          "match_phrase": {
+            "kubernetes.pod_name": {
+              "query": pod_name
             }
+          }
+        },
+      "filter": [
+        {
+          "match_all": {}
+        }
+      ],
+      "should": [],
+      "must_not": []
+    }
+  }
         }
         results = helpers.scan(es, index=index, query=query_body)
         return results
@@ -86,20 +129,38 @@ async def namespace(index:str,pod_name:str):
 @app.get("/logs/{index}/{namespace}/{pod_name}")
 async def namespace(index:str,pod_name:str,namespace:str):
     try:
-        
+        liste=[]
+        liste = []
         query_body = {
-            "query": {
-                "match": {
-                    "kubernetes.namespace_name": {
-                        "query": namespace,
-                        "fuzziness": 0
-                    },
-                    "kubernetes.pod_name": {
-                        "query": pod_name,
-                        "fuzziness": 0
-                    }
-                }
+
+              "query": {
+    "bool": {
+      "must": [
+        {
+          "match_phrase": {
+            "kubernetes.namespace_name": {
+              "query": namespace
             }
+          }
+        },
+        {
+          "match_phrase": {
+            "kubernetes.pod_name": {
+              "query": pod_name
+            }
+          }
+        },
+
+      ],
+      "filter": [
+        {
+          "match_all": {}
+        }
+      ],
+      "should": [],
+      "must_not": []
+    }
+  },
         }
 
 
@@ -114,18 +175,5 @@ async def namespace(index:str,pod_name:str,namespace:str):
 
 
 
-"""query_body ={
-  "query": {
-      "match":{
-          "kubernetes.namespace_name":{
-              "query":"kube-system",
-              "fuzziness":1
-          }
-      }
-  }
-}
 
 
-results = helpers.scan(es, index="logstash-2021.06.30", query=query_body)
-for i in results:
-    print(i)"""
