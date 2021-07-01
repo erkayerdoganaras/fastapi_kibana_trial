@@ -1,19 +1,24 @@
 #Trial Codes for PAgination only
 
-res= es.search(index="logstash-2021.06.26",scroll='2m',size=100,body=query_body)
-counter=0
+res= es.search(index="logstash-2021.07.01",scroll='1m',size=1700,body=myquery) #Size can change due to query
+
 sid=res["_scroll_id"]
 scroll_size=res["hits"]["total"]
 scroll_size=scroll_size["value"]
+for i in res["hits"]["hits"]:
+    print(i)
 print(res["_scroll_id"])
 
+
+counter=0 
 while(scroll_size>0):
-    page=es.scroll(scroll_id=sid,scroll="10m")
+    page=es.scroll(scroll_id=sid,scroll="2m")
     sid=page["_scroll_id"]
     scroll_size=len(page["hits"]["hits"])
     counter+=1
 
 print("total :{}".format(counter))
+
 
 
 
