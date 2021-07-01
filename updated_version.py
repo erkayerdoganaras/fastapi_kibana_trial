@@ -178,8 +178,10 @@ async def namespace(index:str,pod_name:str,namespace:str):
     
     
 @app.get("/time/{index}/{namespace}")
-async def timestamp(index:str,namespace:str,gte:str=Query(None),lte:str=Query(None)):
+async def timestamp(index:str,namespace:str,gte:datetime=Query(None),lte:datetime=Query(None)):
     try:
+        jte=gte - timedelta(hours=3)
+        bte = lte - timedelta(hours=3)
         query_body ={
 
     "query": {
@@ -195,8 +197,8 @@ async def timestamp(index:str,namespace:str,gte:str=Query(None),lte:str=Query(No
             {
             "range": {
                 "@timestamp": {
-                "gte": gte,
-                "lte": lte
+                "gte": jte.strftime("%Y-%m-%d"'T'"%H:%M:%S"),
+                "lte": bte.strftime("%Y-%m-%d"'T'"%H:%M:%S")
 
                 }
             }
