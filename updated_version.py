@@ -171,6 +171,49 @@ async def namespace(index:str,pod_name:str,namespace:str):
         return results
     except:
         pass
+    
+    
+@app.get("/time/{index}/{namespace}")
+async def timestamp(index:str,namespace:str,gte:str=Query(None),lte:str=Query(None)):
+    try:
+        query_body ={
+
+    "query": {
+        "bool": {
+        "must": [
+             {
+                "match_phrase": {
+                      "kubernetes.namespace_name": {
+                          "query": namespace
+                    }
+                }
+            },
+            {
+            "range": {
+                "@timestamp": {
+                "gte": gte,
+                "lte": lte
+
+                }
+            }
+            },
+        ],
+        "filter": [
+            {
+            "match_all": {}
+            }
+        ],
+        "should": [],
+        "must_not": []
+        }
+    }
+        }
+        results = helpers.scan(es, index=index, query=query_body)
+        return results
+    except:
+        pass
+    
+    
 
 
 
