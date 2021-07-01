@@ -13,3 +13,21 @@ while(scroll_size>0 and counter<400):
     counter+=1
 
 print("total :{}".format(counter))
+
+
+
+#PAGINATION METOT2
+res=es.search(index="logstash-2021.07.01",size=50,body=myquery)
+data=res["hits"]["hits"]
+hashmap={}
+step=1
+for i in range(len(data)):
+    if i==0:
+        hashmap[i] = data[0:step]
+    else:
+        startIndex = step * i
+        EndIndex =  ((i+1) * (step))
+        sample = data[startIndex:EndIndex]
+        hashmap[i] = sample
+
+print(hashmap)
