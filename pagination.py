@@ -23,7 +23,7 @@ print("total :{}".format(counter))
 
 
 #PAGINATION METOT2
-res=es.search(index="logstash-2021.07.01",size=50,body=myquery)
+res=es.search(index="logstash-2021.07.01",size=100,body=myquery,from_=0)
 data=res["hits"]["hits"]
 hashmap={}
 step=1
@@ -35,8 +35,10 @@ for i in range(len(data)):
         EndIndex =  ((i+1) * (step))
         sample = data[startIndex:EndIndex]
         hashmap[i] = sample
+for i in hashmap:
+    print(hashmap[i])
 
-print(hashmap)
+print(type(hashmap))
 
 
 
