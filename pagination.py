@@ -37,3 +37,36 @@ for i in range(len(data)):
         hashmap[i] = sample
 
 print(hashmap)
+
+
+
+#PAGINATION METOT3(FROM SIZE)
+query_trial={
+    "from":0,
+    "size":100,
+    "query": {
+    "bool": {
+      "must":
+        {
+          "match_phrase": {
+            "kubernetes.namespace_name": {           #this part can change
+              "query": "kube-system"
+            }
+          }
+        },
+      "filter": [
+        {
+          "match_all": {}
+        }
+      ],
+      "should": [],
+      "must_not": []
+    }
+  }
+        }
+#index would change
+res=es.search(index="logstash-2021.07.01",body=query_trial,size=100)
+data=res["hits"]["hits"]
+data2=res["hits"]["total"]
+for i in data:
+    print(i)
