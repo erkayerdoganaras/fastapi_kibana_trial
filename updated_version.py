@@ -262,6 +262,38 @@ async def sort_page(index:str,namespace_name:str,er:int=Query(None)):
         return liste
     except:
         pass
+    
+    
+@app.get("/log/{index}/container/{containername}") #logs yazıldığı zaman null dönüyor
+async def container(index:str,containername:str):
+    try:
+        query_trial = {
+
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "kubernetes.container_name": {
+                                    "query": containername
+
+                                }
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+        res=helpers.scan(es,index=index,query=query_trial)
+        return res
+    except:
+        pass
 
 
 
