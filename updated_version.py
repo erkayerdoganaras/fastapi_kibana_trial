@@ -221,7 +221,7 @@ async def timestamp(index:str,namespace:str,gte:datetime=Query(None),lte:datetim
     
     
 @app.get("/logs/{index}/ns/{namespace_name}/sort")
-async def uydur(index:str,namespace_name:str,er:int=Query(None)):
+async def sort_page(index:str,namespace_name:str,er:int=Query(None)):
     try:
         liste = []
         if er!=None:
