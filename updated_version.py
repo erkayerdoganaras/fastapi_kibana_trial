@@ -220,7 +220,48 @@ async def timestamp(index:str,namespace:str,gte:datetime=Query(None),lte:datetim
         pass
     
     
+@app.get("/logs/{index}/ns/{namespace_name}/sort")
+async def uydur(index:str,namespace_name:str,er:int=Query(None)):
+    try:
+        liste = []
+        if er!=None:
 
+            formula=(int(er)*100-100)
+        elif er==None:
+            formula=0
+        query_trial = {
+            "from": formula,
+            "size": 100,
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "kubernetes.namespace_name": {
+                                    "query": namespace_name
+
+                                }
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+        res=es.search(index=index,body=query_trial)
+        data=res["hits"]["hits"]
+
+        for i in data:
+            liste.append(i)
+
+        return liste
+    except:
+        pass
 
 
 
