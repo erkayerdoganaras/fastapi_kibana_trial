@@ -527,3 +527,34 @@ async def event_time(gte:datetime=Query(None),lte:datetime=Query(None)):
     res = helpers.scan(es, index="kube-events", query=query)
     return res
 
+#THIS PART TAKES A LONG TIME WHEN GETTING ALL "LOGSTASH INDEXED" DATA
+@app.get("/logstash/all")
+async def arama():
+    try:
+        query_body = {
+
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "_index":{
+                                    "query":"logstash*"}
+
+
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+        results = helpers.scan(es ,query=query_body)
+        return results
+    except:
+        pass
