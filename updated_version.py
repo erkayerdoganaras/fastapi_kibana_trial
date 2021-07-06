@@ -295,7 +295,205 @@ async def container(index:str,containername:str):
     except:
         pass
 
+    
+@app.get("/events")
+async def eventslist():
+    try:
+        liste=[]
+        results = helpers.scan(es, index="kube-events", query={"query": {"match_all": {}}})
+        for item in results:
+            liste.append(item["_source"])
+        return liste
+    except:
+        pass
 
+@app.get("/events/{namespace}")
+async def eventslist(namespace:str):
+    try:
+        query_trial = {
+
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "metadata.namespace": {
+                                    "query": namespace
+
+                                }
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+        res=helpers.scan(es,index="kube-events",query=query_trial)
+        return res
+    except:
+        pass
+
+
+@app.get("/events/kindof/{kind}")
+async def involvedObject_kind(kind:str):
+    try:
+        query_trial = {
+
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "involvedObject.kind": {
+                                    "query": kind
+
+                                }
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+        res=helpers.scan(es,index="kube-events",query=query_trial)
+        return res
+    except:
+        pass
+
+@app.get("/events/nameof/{name}")
+async def involvedObject_name(name:str):
+    try:
+        query_trial = {
+
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "involvedObject.name": {
+                                    "query": name
+
+                                }
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+        res=helpers.scan(es,index="kube-events",query=query_trial)
+        return res
+    except:
+        pass
+
+@app.get("/events/typeof/{type}")
+async def typeof(type:str):
+    try:
+        query_trial = {
+
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "type": {
+                                    "query": type
+
+                                }
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+        res=helpers.scan(es,index="kube-events",query=query_trial)
+        return res
+    except:
+        pass
+
+
+@app.get("/events/reason/{reason}")
+async def typeof(reason:str):
+    try:
+        query_trial = {
+
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "reason": {
+                                    "query": reason
+
+                                }
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+        res=helpers.scan(es,index="kube-events",query=query_trial)
+        return res
+    except:
+        pass
+
+@app.get("/events/message/{message}")
+async def typeof(message:str):
+    try:
+        query_trial = {
+
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "message": {
+                                    "query": message
+
+                                }
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+        res=helpers.scan(es,index="kube-events",query=query_trial)
+        return res
+    except:
+        pass
 
 
 
