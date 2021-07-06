@@ -495,5 +495,35 @@ async def typeof(message:str):
     except:
         pass
 
+@app.get("/event-time/")
+async def event_time(gte:datetime=Query(None),lte:datetime=Query(None)):
+    jte = gte - timedelta(hours=3)
+    bte = lte - timedelta(hours=3)
 
+
+    query={
+    "query": {
+        "bool": {
+          "must": [
+            {
+              "range": {
+                "firstTimestamp": {
+                  "format": "strict_date_optional_time",
+                  "gte":jte.strftime("%Y-%m-%d"'T'"%H:%M:%S"),
+                "lte": bte.strftime("%Y-%m-%d"'T'"%H:%M:%S")
+                }
+              }
+            }
+          ],
+          "filter": [
+            {
+              "match_all": {}
+            }
+          ],
+          "should": [],
+          "must_not": []
+        }
+      }}
+    res = helpers.scan(es, index="kube-events", query=query)
+    return res
 
