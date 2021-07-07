@@ -558,3 +558,79 @@ async def arama():
         return results
     except:
         pass
+    
+@app.get("/logstash/all/paginated")
+async def arama(*,er:int=Query(None)):
+    try:
+        liste1 = []
+        if er != None:
+
+            formula = (int(er) * 100 - 100)
+        elif er == None:
+            formula = 0
+
+
+        query_body = {
+            "from":formula,
+            "size":100,
+            "query": {
+                "bool": {
+                    "must":
+                        {
+                            "match_phrase": {
+                                "_index":{
+                                    "query":"logstash*"}
+
+
+                            }
+                        },
+                    "filter": [
+                        {
+                            "match_all": {}
+                        }
+                    ],
+                    "should": [],
+                    "must_not": []
+                }
+            }
+        }
+
+
+        liste=[]
+        res = es.search(body=query_body)
+        data = res["hits"]["hits"]
+        for i in data:
+            liste.append(i)
+        return liste
+
+
+    except:
+        pass   
+    
+@app.get("/logstash/number-queries")
+async def log_num():
+    liste1=[]
+    query_body2 = {
+        "query": {
+            "bool": {
+                "must":
+                    {
+                        "match_phrase": {
+                            "_index": {
+                                "query": "logstash*"}
+
+                        }
+                    },
+                "filter": [
+                    {
+                        "match_all": {}
+                    }
+                ],
+                "should": [],
+                "must_not": []
+            }
+        }
+    }
+
+    res = es.count(body=query_body2)["count"]
+    return res    
