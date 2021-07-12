@@ -87,3 +87,4 @@ for i in data:
 
 #Look at this too
 https://kb.objectrocket.com/elasticsearch/elasticsearch-and-scroll-in-python-953
+https://gist.github.com/hmldd/44d12d3a61a8d8077a3091c4ff7b9307
