@@ -22,18 +22,6 @@ from datetime import timedelta
 app = FastAPI()
 es=Elasticsearch(['http://168.119.224.222:32072'])
 
-@app.get("/logs")
-async def get_logs():
-    try:
-        liste= []
-        results = helpers.scan(es, index="logstash-2021.06.26", query={"query": {"match_all": {}}})
-        for item in results:
-            liste.append(item['_source']["log"])
-        return liste
-    except:
-        pass
-
-
 @app.get("/logs/{index}")
 async def log_index(index:str):
     try:
@@ -41,9 +29,15 @@ async def log_index(index:str):
         results = helpers.scan(es, index=index, query={"query": {"match_all": {}}})
         for item in results:
             liste.append(item['_source']["log"])
-        return liste
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":liste}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 @app.get("/logs/{index}/{namespace}")
 async def namespace(index:str,namespace:str):
@@ -72,33 +66,15 @@ async def namespace(index:str,namespace:str):
   }
         }
         results = helpers.scan(es, index=index, query=query_body)
-        return results
-    except:
-        pass
-
-"""@app.get("/logs/{index}/{pod_id}")
-async def pod_id(pod_id:str,index:str):
-    try:
-        liste=[]
-        query_body = {
-            "query": {
-                "bool": {
-                    "must": {
-                        "match": {
-                            "kubernetes.pod_id": pod_id
-
-                        }
-                    }
-                }
-            }
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":results}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
         }
-        results = helpers.scan(es, index=index, query=query_body)
-        for item in results:
-            liste.append(item)
-        return liste
-
-    except:
-        pass"""
 
 @app.get("/logs/{index}/all/{pod_name}")
 async def namespace(index:str,pod_name:str):
@@ -126,9 +102,15 @@ async def namespace(index:str,pod_name:str):
   }
         }
         results = helpers.scan(es, index=index, query=query_body)
-        return results
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":results}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 @app.get("/logs/{index}/{namespace}/{pod_name}")
 async def namespace(index:str,pod_name:str,namespace:str):
@@ -172,9 +154,15 @@ async def namespace(index:str,pod_name:str,namespace:str):
 
         results = helpers.scan(es, index=index, query=query_body)
 
-        return results
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":results}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
     
     
 @app.get("/time/{index}/{namespace}")
@@ -215,9 +203,15 @@ async def timestamp(index:str,namespace:str,gte:datetime=Query(None),lte:datetim
     }
         }
         results = helpers.scan(es, index=index, query=query_body)
-        return results
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":results}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
     
     
 @app.get("/logs/{index}/ns/{namespace_name}/sort")
@@ -256,12 +250,15 @@ async def sort_page(index:str,namespace_name:str,er:int=Query(None)):
         res=es.search(index=index,body=query_trial)
         data=res["hits"]["hits"]
 
-        for i in data:
-            liste.append(i)
-
-        return liste
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":data}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
     
     
 @app.get("/log/{index}/container/{containername}") #logs yazıldığı zaman null dönüyor
@@ -291,9 +288,15 @@ async def container(index:str,containername:str):
             }
         }
         res=helpers.scan(es,index=index,query=query_trial)
-        return res
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":res}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
     
 @app.get("/events")
@@ -303,9 +306,15 @@ async def eventslist():
         results = helpers.scan(es, index="kube-events", query={"query": {"match_all": {}}})
         for item in results:
             liste.append(item["_source"])
-        return liste
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":liste}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 @app.get("/events/{namespace}")
 async def eventslist(namespace:str):
@@ -334,9 +343,15 @@ async def eventslist(namespace:str):
             }
         }
         res=helpers.scan(es,index="kube-events",query=query_trial)
-        return res
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":res}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 
 @app.get("/events/kindof/{kind}")
@@ -366,9 +381,15 @@ async def involvedObject_kind(kind:str):
             }
         }
         res=helpers.scan(es,index="kube-events",query=query_trial)
-        return res
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":res}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 @app.get("/events/nameof/{name}")
 async def involvedObject_name(name:str):
@@ -397,9 +418,15 @@ async def involvedObject_name(name:str):
             }
         }
         res=helpers.scan(es,index="kube-events",query=query_trial)
-        return res
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":res}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 @app.get("/events/typeof/{type}")
 async def typeof(type:str):
@@ -428,9 +455,15 @@ async def typeof(type:str):
             }
         }
         res=helpers.scan(es,index="kube-events",query=query_trial)
-        return res
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":res}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 
 @app.get("/events/reason/{reason}")
@@ -460,9 +493,15 @@ async def typeof(reason:str):
             }
         }
         res=helpers.scan(es,index="kube-events",query=query_trial)
-        return res
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":res}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 @app.get("/events/message/{message}")
 async def typeof(message:str):
@@ -491,17 +530,24 @@ async def typeof(message:str):
             }
         }
         res=helpers.scan(es,index="kube-events",query=query_trial)
-        return res
-    except:
-        pass
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":res}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 @app.get("/event-time/")
 async def event_time(gte:datetime=Query(None),lte:datetime=Query(None)):
-    jte = gte - timedelta(hours=3)
-    bte = lte - timedelta(hours=3)
+    try:
+        jte = gte - timedelta(hours=3)
+        bte = lte - timedelta(hours=3)
 
 
-    query={
+        query={
     "query": {
         "bool": {
           "must": [
@@ -524,8 +570,16 @@ async def event_time(gte:datetime=Query(None),lte:datetime=Query(None)):
           "must_not": []
         }
       }}
-    res = helpers.scan(es, index="kube-events", query=query)
-    return res
+        res = helpers.scan(es, index="kube-events", query=query)
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":res}
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
 
 #THIS PART TAKES A LONG TIME WHEN GETTING ALL "LOGSTASH INDEXED" DATA
 @app.get("/logstash/all")
@@ -555,9 +609,16 @@ async def arama():
             }
         }
         results = helpers.scan(es ,query=query_body)
-        return results
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":results}
     except:
-        pass
+        except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
     
 @app.get("/logstash/all/paginated")
 async def arama(*,er:int=Query(None)):
@@ -599,18 +660,24 @@ async def arama(*,er:int=Query(None)):
         liste=[]
         res = es.search(body=query_body)
         data = res["hits"]["hits"]
-        for i in data:
-            liste.append(i)
-        return liste
+      
+        return {
+            "status":"SUCCESS",
+            "message":"DONDU",
+            "data":data}
 
 
-    except:
-        pass   
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }   
     
 @app.get("/logstash/number-queries")
 async def log_num():
-    liste1=[]
-    query_body2 = {
+    try:
+        liste1=[]
+        query_body2 = {
         "query": {
             "bool": {
                 "must":
@@ -632,5 +699,13 @@ async def log_num():
         }
     }
 
-    res = es.count(body=query_body2)["count"]
-    return res    
+        res = es.count(body=query_body2)["count"]
+        return {
+                "status":"SUCCESS",
+                "message":"DONDU",
+                "data":res} 
+    except Exception as e:
+        return {
+            "status": "FAILURE",
+            "message": "DONMEDI"+str(e)
+        }
