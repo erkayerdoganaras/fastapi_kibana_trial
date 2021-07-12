@@ -72,3 +72,15 @@ data=res["hits"]["hits"]
 data2=res["hits"]["total"]
 for i in data:
     print(i)
+    
+    
+    
+    
+    
+    
+#Have a look at this
+{
+  "index": {
+    "max_result_window": 10000000
+  }
+}
