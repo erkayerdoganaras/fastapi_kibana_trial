@@ -84,3 +84,6 @@ for i in data:
     "max_result_window": 10000000
   }
 }
+
+#Look at this too
+https://kb.objectrocket.com/elasticsearch/elasticsearch-and-scroll-in-python-953
